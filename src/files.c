@@ -28,7 +28,6 @@
 #include "tintin.h"
 #include <sys/stat.h>
 #include <string.h>
-#include <stdio.h>
 
 
 DO_COMMAND(do_read)
