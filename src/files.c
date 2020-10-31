@@ -39,17 +39,17 @@ DO_COMMAND(do_read)
 
 	// Expand '~' to $HOME/
 	if(arg1[0] == '~')    
-        {
+	{
 		// Remove ~ by pointing arg1 to second character
 		arg1 = arg1+1;
 		
 		// Prepend $HOME/ to the rest
 		char* home = getenv("HOME");
 		char* tmpStr = (char*) malloc(1 + strlen(home) + strlen(arg1));
-                strcpy(tmpStr, home);
-                strcat(tmpStr, arg1);
+		strcpy(tmpStr, home);
+		strcat(tmpStr, arg1);
 		arg1 = tmpStr;
-        }
+	}
 
 	if ((fp = fopen(arg1, "r")) == NULL)
 	{
