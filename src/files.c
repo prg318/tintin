@@ -47,7 +47,8 @@ DO_COMMAND(do_read)
 	}
 	else
 	{
-		filename = arg1;
+		filename = (char*) malloc(strlen(arg1));
+		strcpy(filename, arg1);
 	}
 
 	if ((fp = fopen(filename, "r")) == NULL)
