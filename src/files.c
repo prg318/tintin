@@ -60,7 +60,9 @@ DO_COMMAND(do_read)
 		return ses;
 	}
 
-	return read_file(ses, fp, arg1);
+	struct session *s = read_file(ses, fp, arg1);
+	free(arg1);
+	return s;
 }
 
 struct session *read_file(struct session *ses, FILE *fp, char *filename)
