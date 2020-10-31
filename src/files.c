@@ -46,9 +46,9 @@ DO_COMMAND(do_read)
 		strcat(filename, arg1+1);
 	}
 	else
+	{
 		filename = arg1;
-
-
+	}
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
