@@ -27,6 +27,8 @@
 
 #include "tintin.h"
 #include <sys/stat.h>
+#include <string.h>
+#include <stdio.h>
 
 
 DO_COMMAND(do_read)
@@ -34,6 +36,24 @@ DO_COMMAND(do_read)
 	FILE *fp;
 
 	sub_arg_in_braces(ses, arg, arg1, GET_ONE, SUB_VAR|SUB_FUN);
+
+	// Expand '~' to $HOME/
+	if(arg1[0] == '~')    
+        {
+		// Remove ~ by shifting each character back 
+		int origlen = strlen(arg1);
+		for(int i=0; i < origlen; i++)
+		{
+			*(arg1+i) = *(arg1+i+1);
+		}
+		
+		// Prepend $HOME/ to the rest
+		char* home = getenv("HOME");
+		char* tmpStr = (char*) malloc(1 + strlen(home) + strlen(arg1));
+                strcpy(tmpStr, home);
+                strcat(tmpStr, arg1);
+		arg1 = tmpStr;
+        }
 
 	if ((fp = fopen(arg1, "r")) == NULL)
 	{
