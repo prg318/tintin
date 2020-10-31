@@ -40,12 +40,8 @@ DO_COMMAND(do_read)
 	// Expand '~' to $HOME/
 	if(arg1[0] == '~')    
         {
-		// Remove ~ by shifting each character back 
-		int origlen = strlen(arg1);
-		for(int i=0; i < origlen; i++)
-		{
-			*(arg1+i) = *(arg1+i+1);
-		}
+		// Remove ~ by pointing arg1 to second character
+		arg1 = arg1+1;
 		
 		// Prepend $HOME/ to the rest
 		char* home = getenv("HOME");
