@@ -38,31 +38,29 @@ DO_COMMAND(do_read)
 	sub_arg_in_braces(ses, arg, arg1, GET_ONE, SUB_VAR|SUB_FUN);
 
 	// Expand '~' to $HOME/
+	char* filename = NULL;
 	if(arg1[0] == '~')    
 	{
-		// Remove ~ by pointing arg1 to second character
-		arg1 = arg1+1;
-		
-		// Prepend $HOME/ to the rest
 		char* home = getenv("HOME");
-		char* tmpStr = (char*) malloc(1 + strlen(home) + strlen(arg1));
-		strcpy(tmpStr, home);
-		strcat(tmpStr, arg1);
-		arg1 = tmpStr;
+		filename = (char*) malloc(strlen(arg1) + strlen(home));
+		strcpy(filename, home);
+		strcat(filename, arg1+1);
 	}
+	else
+		filename = arg1;
 
-	if ((fp = fopen(arg1, "r")) == NULL)
+
+
+	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		check_all_events(ses, EVENT_FLAG_SYSTEM, 0, 2, "READ ERROR", arg1, "FILE NOT FOUND.");
+		check_all_events(ses, EVENT_FLAG_SYSTEM, 0, 2, "READ ERROR", filename, "FILE NOT FOUND.");
 
-		tintin_printf(ses, "#READ {%s} - FILE NOT FOUND.", arg1);
+		tintin_printf(ses, "#READ {%s} - FILE NOT FOUND.", filename);
 
 		return ses;
 	}
 
-	struct session *s = read_file(ses, fp, arg1);
-	free(arg1);
-	return s;
+	return read_file(ses, fp, filename);
 }
 
 struct session *read_file(struct session *ses, FILE *fp, char *filename)
