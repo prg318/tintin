@@ -47,7 +47,7 @@ DO_COMMAND(do_read)
 	}
 	else
 	{
-		filename = (char*) malloc(strlen(arg1));
+		filename = (char*) malloc(strlen(arg1) + 1);
 		strcpy(filename, arg1);
 	}
 
