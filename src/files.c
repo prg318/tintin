@@ -27,6 +27,7 @@
 
 #include "tintin.h"
 #include <sys/stat.h>
+#include <string.h>
 
 
 DO_COMMAND(do_read)
@@ -35,16 +36,33 @@ DO_COMMAND(do_read)
 
 	sub_arg_in_braces(ses, arg, arg1, GET_ONE, SUB_VAR|SUB_FUN);
 
-	if ((fp = fopen(arg1, "r")) == NULL)
+	// Expand '~' to $HOME/
+	char* filename = NULL;
+	if(arg1[0] == '~')    
 	{
-		check_all_events(ses, EVENT_FLAG_SYSTEM, 0, 2, "READ ERROR", arg1, "FILE NOT FOUND.");
+		char* home = getenv("HOME");
+		filename = (char*) malloc(strlen(arg1) + strlen(home));
+		strcpy(filename, home);
+		strcat(filename, arg1+1);
+	}
+	else
+	{
+		filename = (char*) malloc(strlen(arg1) + 1);
+		strcpy(filename, arg1);
+	}
 
-		tintin_printf(ses, "#READ {%s} - FILE NOT FOUND.", arg1);
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		check_all_events(ses, EVENT_FLAG_SYSTEM, 0, 2, "READ ERROR", filename, "FILE NOT FOUND.");
+
+		tintin_printf(ses, "#READ {%s} - FILE NOT FOUND.", filename);
 
 		return ses;
 	}
 
-	return read_file(ses, fp, arg1);
+	struct session *s = read_file(ses, fp, filename);
+	free(filename);
+	return s;
 }
 
 struct session *read_file(struct session *ses, FILE *fp, char *filename)
